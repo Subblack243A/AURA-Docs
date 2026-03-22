@@ -1,6 +1,6 @@
 # AURA - Front-End
 
-Aura es una plataforma inteligente diseñada para el monitoreo del bienestar emocional y académico de los estudiantes de la Universidad de Cundinamarca. Utiliza tecnologías de vanguardia como reconocimiento facial y análisis de emociones para ofrecer una experiencia personalizada y segura, este es alojado en el siguiente repositorio [AURA-Front-End](https://github.com/Subblack243A/AURA-Front-End).
+Aura es una plataforma inteligente diseñada para el monitoreo del bienestar emocional y académico de los estudiantes de la Universidad de Cundinamarca. Utiliza tecnologías de vanguardia como reconocimiento facial y análisis de emociones para ofrecer una experiencia personalizada y segura, este es alojado en el siguiente repositorio [AURA-Front-End](https://github.com/Subblack243A/AURA-Front-End), este repositorio es privado y solo se tendrá acceso a él mediante invitación.
 
 ## 🚀 Tecnologías y Frameworks
 

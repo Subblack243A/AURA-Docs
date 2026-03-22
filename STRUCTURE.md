@@ -1,6 +1,6 @@
 # 🚀 AURA Healthcare — Monolithic Infrastructure
 
-Este repositorio contiene la orquestación unificada de la plataforma **AURA**. Utiliza **Docker Compose** para gestionar el ciclo de vida del frontend, backend, base de datos y servicios de infraestructura en un solo servidor (DigitalOcean Droplet), alojado en el siguiente repositorio [AURA-structure](https://github.com/Subblack243A/AURA-structure).
+Este repositorio contiene la orquestación unificada de la plataforma **AURA**. Utiliza **Docker Compose** para gestionar el ciclo de vida del frontend, backend, base de datos y servicios de infraestructura en un solo servidor (DigitalOcean Droplet), alojado en el siguiente repositorio [AURA-structure](https://github.com/Subblack243A/AURA-structure), este repositorio es privado y solo se tendrá acceso a él mediante invitación.
 
 ---
 

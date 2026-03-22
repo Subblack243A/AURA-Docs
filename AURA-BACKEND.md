@@ -1,6 +1,6 @@
 # AURA Backend - API de Bienestar Emocional
 
-Este es el backend de **AURA**, una plataforma de bienestar emocional que utiliza Inteligencia Artificial para el análisis de sentimientos y reconocimiento facial. Construido con **Django Rest Framework** y **DeepFace**, alojado en el siguiente repositorio [AURA-Back-End](https://github.com/Subblack243A/AURA-Back-End).
+Este es el backend de **AURA**, una plataforma de bienestar emocional que utiliza Inteligencia Artificial para el análisis de sentimientos y reconocimiento facial. Construido con **Django Rest Framework** y **DeepFace**, alojado en el siguiente repositorio [AURA-Back-End](https://github.com/Subblack243A/AURA-Back-End), este repositorio es privado y solo se tendrá acceso a él mediante invitación.
 
 ## 🚀 Tecnologías Principales
 
