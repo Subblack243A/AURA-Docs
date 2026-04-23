@@ -109,6 +109,19 @@ La API utiliza los códigos de estado HTTP estándar para indicar el resultado d
 
 Las respuestas de error suelen incluir un cuerpo JSON con el detalle del campo que falló o un mensaje descriptivo de la excepción.
 
+### 3.5. Parámetros de Biometría e IA
+
+El sistema utiliza configuraciones específicas para garantizar el equilibrio entre seguridad y usabilidad en el reconocimiento facial.
+
+| Parámetro | Valor / Método | Descripción |
+| :--- | :--- | :--- |
+| **Modelo de Rostro** | ArcFace | Modelo de red neuronal para extracción de características. |
+| **Métrica de Similitud** | Distancia del Coseno | Método matemático para comparar vectores (embeddings). |
+| **Umbral de Identidad** | **0.68** | Límite máximo de distancia para considerar una coincidencia positiva. |
+| **Dimensiones Vectoriales** | 512-d | Tamaño del embedding generado por cada rostro. |
+| **Clasificación Emocional** | Probabilidad Dominante | Se asigna la emoción con el puntaje más alto (max) entre las 7 categorías. |
+| **Backend Detector** | OpenCV | Motor utilizado para la detección inicial de la caja facial. |
+
 ## 4. Documentación del Frontend
 
 El frontend de AURA está desarrollado bajo el estándar de **Single Page Application (SPA)** utilizando **JavaScript Vainilla (ES8+)**. Se aloja en el repositorio privado [AURA-Front-End](https://github.com/Subblack243A/AURA-Front-End).
@@ -180,9 +193,34 @@ La gestión del esquema de la base de datos se realiza mediante el sistema de mi
 
 El despliegue de AURA está completamente automatizado y containerizado, orquestado desde el repositorio [AURA-structure](https://github.com/Subblack243A/AURA-structure) y diseñado para ser alojado en un **DigitalOcean Droplet**.
 
-### 6.1. Variables de Envorno e Infraestructura de Servidor
+### 6.1. Variables de Entorno e Infraestructura de Servidor
 
-El sistema centraliza su configuración en un archivo `.env` ubicado en la raíz. Para una correcta construcción, los repositorios deben estar ubicados al mismo nivel jerárquico dentro del servidor:
+El sistema centraliza su configuración en un archivo `.env` ubicado en la raíz de los repositorios especificados a continuación. **Nota Importante:** No comparta este archivo ni lo incluya en el control de versiones.
+
+| Variable | Descripción | Valor Sugerido / Ejemplo | Raíz de Repositorio |
+| :--- | :--- | :--- | :--- |
+| `SECRET_KEY` | Clave secreta única para la seguridad de Django. | `tu_clave_secreta_aqui` | AURA-Back-End |
+| `ALLOWED_HOSTS` | Dominios permitidos para recibir peticiones a la API. | `api.tudominio.com,localhost` | AURA-Back-End |
+| `DB_NAME` | Nombre de la base de datos PostgreSQL. | `aura_db` | AURA-Back-End y AURA-structure|
+| `DB_USER` | Usuario administrativo de la base de datos. | `aura_admin` | AURA-Back-End |
+| `DB_PASSWORD` | Contraseña del usuario de base de datos. | `tu_contraseña_segura` | AURA-Back-End |
+| `DB_HOST` | Host de la base de datos (nombre de servicio en Docker). | `db` | AURA-Back-End |
+| `DB_PORT` | Puerto de escucha de PostgreSQL. | `5432` | AURA-Back-End |
+| `RESEND_API_KEY` | Calve de API para el envío de correos electrónicos. | `re_12345...` | AURA-Back-End |
+| `RESEND_SENDER_EMAIL` | Dirección de correo verificada que envía los mensajes. | `noreply@tudominio.com` | AURA-Back-End |
+| `RESEND_SENDER_NAME` | Nombre que aparecerá como remitente del correo. | `AURA Healthcare` | AURA-Back-End |
+| `POSTGRES_DB` | Nombre de la base de datos PostgreSQL. | `aura_db` | AURA-structure|
+| `POSTGRES_USER` | Usuario administrativo de la base de datos. | `aura_admin` | AURA-structure|
+| `POSTGRES_PASSWORD` | Contraseña del usuario de base de datos. | `tu_contraseña_segura` | AURA-structure|
+| `DOCKLOGKEEPER_PASSWORD` | Contraseña del usuario de base de datos. | `tu_contraseña_segura` | AURA-structure|
+
+**Integración con Resend:**
+El sistema utiliza el SDK oficial de **Resend** para la gestión de correos electrónicos transaccionales. Este servicio es fundamental para:
+- Envío de códigos **OTP** durante el registro.
+- Notificaciones de recuperación de contraseña.
+- Confirmación de acciones administrativas.
+
+Para una correcta construcción, los repositorios deben estar ubicados al mismo nivel jerárquico dentro del servidor:
 1. `AURA-structure/`
 2. `AURA-Back-End/`
 3. `AURA-Front-End/`
@@ -192,9 +230,9 @@ El sistema centraliza su configuración en un archivo `.env` ubicado en la raíz
 - **Mínima Exposición:** Los contenedores de base de datos y backend no tienen puertos expuestos al exterior. Solo Nginx expone los puertos 80 y 443.
 - **Terminación SSL:** Nginx gestiona los certificados de Let's Encrypt, los cuales se montan como volúmenes de solo lectura (`:ro`) por seguridad.
 
-### 6.2. Dockerización y Límites de Recursos
+### 6.2. Dockerización e Infraestructura Inicial
 
-La infraestructura se define mediante **Docker Compose**, definiendo:
+La infraestructura se define mediante **Docker Compose**. El sistema tiene definidos límites de recursos para asegurar la estabilidad del Droplet:
 
 | Contenedor | Rol / Responsabilidad | Recurso Límite |
 | :--- | :--- | :--- |
@@ -204,6 +242,46 @@ La infraestructura se define mediante **Docker Compose**, definiendo:
 | `db` | Almacenamiento PostgreSQL con extensión pgvector. | 1GB RAM |
 | `certbot` | Automatización de certificados Let's Encrypt. | N/A |
 | `docklogkeeper` | Monitoreo visual de logs en tiempo real (P. 8888). | N/A |
+
+### 6.3. Guía de Despliegue Paso a Paso
+
+Para realizar el despliegue inicial del sistema AURA en un nuevo servidor, siga estrictamente el orden de estos pasos:
+
+#### 1. Clonación de Repositorios
+Los tres repositorios deben clonarse como carpetas hermanas dentro de un mismo directorio raíz en el servidor para que las rutas relativas de Docker funcionen correctamente:
+```bash
+git clone https://github.com/Subblack243A/AURA-structure.git
+git clone https://github.com/Subblack243A/AURA-Back-End.git
+git clone https://github.com/Subblack243A/AURA-Front-End.git
+```
+
+#### 2. Configuración de Variables de Entorno
+Debe crear los archivos `.env` en las siguientes ubicaciones basándose en la tabla de la sección 6.1:
+- `AURA-structure/.env`
+- `AURA-Back-End/AuraBackend/.env` (Requerido para la lógica interna de Django).
+
+#### 3. Construcción e Inicio de Contenedores
+Sitúese en la carpeta de estructura y levante los servicios:
+```bash
+cd AURA-structure
+docker compose up -d --build
+```
+
+#### 4. Preparación de la Base de Datos
+Una vez que los contenedores estén en ejecución (estado *healthy*), ejecute las migraciones iniciales para crear la estructura de tablas:
+```bash
+docker compose exec aura_backend python manage.py migrate
+```
+
+#### 5. Generación de Certificados SSL (HTTPS)
+Para habilitar la seguridad TLS, utilice Certbot para generar los certificados iniciales (asegúrese de que los dominios apunten a la IP del servidor):
+```bash
+docker compose run --rm certbot certonly --webroot -w /var/www/certbot -d tu_dominio.com -d api.tu_dominio.com
+```
+Posteriormente, reinicie la configuración de Nginx para reconocer los nuevos certificados:
+```bash
+docker compose exec nginx nginx -s reload
+```
 
 ## 7. Pruebas (Testing)
 
